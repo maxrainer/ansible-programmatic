@@ -1,0 +1,50 @@
+{ "inventory": {
+				"groups": {
+					"ubuntu": {
+						"hosts": {
+							"ansiblewww": { 
+								"vars": {
+									"h11": "one",
+									"h12": "two"
+								}
+							},						
+							"ansibledb": { }
+						},
+						"vars": {
+							"u1": "one",
+							"u2": "two"
+						}
+					},
+					"redhat": {
+						"vars": {"rhvar1": "hut1" },
+						"hosts": {
+							"rh1": { }, 
+							"rh2": { 
+								"vars": { "rh2var1": "roterhut2" }
+							}
+						}
+					},
+					"debian": {
+						"hosts": {
+							"d1": { },
+							"d2": { }
+						},
+						"groups": {
+							"debian7": { 
+								"hosts": {
+									"d71": { },
+									"d72": { }
+								}
+								
+							}	
+						}
+					}
+				}		
+			},
+"options": { 
+			"forks": "3",
+			"become_methode": "sudo",
+			"verbosity": "3",
+			"connection": "ssh"
+		}
+}

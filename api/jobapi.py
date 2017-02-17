@@ -68,7 +68,7 @@ if __name__ == '__main__':
     Configuration.read_config(option_dict.get('configfile'))
     if option_dict.get('debug'):
         Configuration.set_debug()
-    app.run (debug=Configuration.is_debug())
+    app.run (debug=Configuration.is_debug(), host='0.0.0.0', port=5000)
     
     
     
