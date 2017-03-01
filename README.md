@@ -41,7 +41,7 @@
  				"connection": "ssh"
  			}
 }
-``
+```
 
 ## Redis Connection
 	To given groups and hosts variables can be expanded by redis cache. 
