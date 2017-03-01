@@ -40,7 +40,6 @@ class Job(object):
             result['finished'] = 'true'
             result['starttime'] = self.starttime
             result['stoptime'] = self.stoptime
-            result['runtime'] = self.runtime
         except:
             result = {'finished':'false'}
         return result
