@@ -48,6 +48,10 @@ def get_state(uuid):
 def bad_request(error):
     return make_response(jsonify({'error': "maybe missing parameter"}))
 
+@app.errorhandler(500)
+def internal_error(error):
+    return make_response(jsonify({'error': 'internal server error: ' + error.message }))
+
 def input_parser():
     parser = OptionParser("jobapi.py -c [config File] -d")
     parser.add_option("-c", "--config", default=None, dest="configfile", help="[REQUIRED]config File")

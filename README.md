@@ -1,8 +1,13 @@
 # ansible-programmatic
-programmatic Interface for Ansible 2.x 
+# programmatic Interface for Ansible 2.x 
 
+## ENVIRONMENT variables
+  * REDIS_SERVER   	(optional): defaults to localhost
+  * REDIS_PORT   	(optional): defaults to 6379
+  * REDIS_DB   		(optional): defaults to 0
+  * REDIS_ENABLED   (optional): defaults to False
 
-* provided REST APIs
+## provided REST APIs
   * @app.route('/ansible/api/v1.0/startplay/<playbook>', methods=['POST'])
   	start play and set playbook YAML
   * @app.route('/ansible/api/v1.0/state/<uuid>', methods=['GET'])
@@ -10,7 +15,7 @@ programmatic Interface for Ansible 2.x
   * @app.route('/ansible/api/v1.0/jobs', methods=['GET'])
   	list all jobs (plays)
 
-* JSON Format for "startplay" POST body
+## JSON Format for "startplay" POST body
 	groups may be nested
 	
 
@@ -38,7 +43,7 @@ programmatic Interface for Ansible 2.x
 }
 ``
 
-* Redis Connection
+## Redis Connection
 	To given groups and hosts variables can be expanded by redis cache. 
 	This is an alternative to passing variables within the REST API in JSON.
 	Using this keys at redis cache:

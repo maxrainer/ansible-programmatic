@@ -4,6 +4,7 @@ Created on 13. Feb. 2017
 @author: max
 '''
 from xml.etree import ElementTree
+import os
 
 class Configuration(object):
     
@@ -23,25 +24,20 @@ class Configuration(object):
     
     @classmethod
     def read_config(cls, fileurl):
+        cls.redis_host = os.getenv('REDIS_SERVER', 'localhost')
+        cls.redis_port = os.getenv('REDIS_PORT', 6379)
+        cls.redis_db = os.getenv('REDIS_DB', 0)
+        cls.redis_enabled = os.getenv('REDIS_ENABLED', False)
+        
         tree = ElementTree.parse(fileurl)
         root = tree.getroot()
         for child in root:
-            if (child.tag == 'redis_host'):
-                cls.redis_host = child.text
-            elif (child.tag == 'redis_enabled'):
-                cls.redis_enabled = bool(child.text)
-            elif (child.tag == 'redis_port'):
-                cls. redis_port = int(child.text)
-            elif (child.tag == 'redis_db'):
-                cls.redis_db = int(child.text)
-            elif (child.tag == 'playbook_dir'):
+            if (child.tag == 'playbook_dir'):
                 cls.playbook_dir = child.text
             elif (child.tag == 'playbook_default'):
                 cls.playbook_default = child.text
             elif (child.tag == 'job_history'):
-                cls.job_history = int(child.text)     
-            elif (child.tag == 'elastic_url'):
-                cls.elastic_url = child.text          
+                cls.job_history = int(child.text)       
         
     @classmethod
     def is_redis_enabled(cls):
@@ -54,3 +50,4 @@ class Configuration(object):
     @classmethod
     def is_debug(cls):
         return cls.debug
+    
