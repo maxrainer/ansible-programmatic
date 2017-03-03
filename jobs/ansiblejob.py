@@ -50,7 +50,13 @@ class JobAnsible(threading.Thread):
 
         self.inventory = Inventory(self.loader, self.variable_manager, self.inventoryContainer.allHosts())  
         for group in self.inventoryContainer.groups:
-            self.inventory.add_group(group)  
+            if group.name == 'all':
+                if group.vars:
+                    self.inventory.get_group('all').vars.update(group.vars)
+            else:
+                group.parent_groups.append(self.inventory.get_group('all'))
+                self.inventory.add_group(group)  
+                
         self.variable_manager.set_inventory(self.inventory)
     
         self.playbook = "%s/%s" % (self.pb_dir__, self.playbook__)   
