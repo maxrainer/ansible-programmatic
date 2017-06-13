@@ -12,6 +12,7 @@ from config.configuration import Configuration
 import threading
 from ansible.utils.display import Display
 from options import AnsibleOptions
+from ansible.errors import AnsibleFileNotFound
 
 class JobAnsible(threading.Thread):
 
@@ -28,8 +29,11 @@ class JobAnsible(threading.Thread):
         self._load()        
         
     def run(self):
-        self.pbx.run()
-        self._job.stats = self.pbx._tqm._stats
+        try:
+            self.pbx.run()
+            self._job.stats = self.pbx._tqm._stats
+        except AnsibleFileNotFound:
+            self._job.filenotfound()
         self._job.finished()
         
         

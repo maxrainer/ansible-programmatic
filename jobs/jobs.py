@@ -11,6 +11,7 @@ from options import AnsibleOptions
 from config.configuration import Configuration
 from _collections import deque
 import datetime
+from ansible.executor.stats import AggregateStats
 
 
 class Job(object):
@@ -20,6 +21,7 @@ class Job(object):
         self.ansible_options = AnsibleOptions()
         self.starttime = datetime.datetime.now()
         self.stoptime = None
+        self.playbook = None
         
     @property
     def inventory_json(self):
@@ -31,8 +33,9 @@ class Job(object):
           
     @property
     def stats(self):
-        result = {}
+        result = {}     
         try:
+            result['uuid'] = str(self.uuid)
             result['processed'] = self._stats.processed
             result['failures'] = self._stats.failures
             result['changed'] = self._stats.changed
@@ -40,8 +43,9 @@ class Job(object):
             result['finished'] = 'true'
             result['starttime'] = self.starttime
             result['stoptime'] = self.stoptime
+            result['playbook'] = self.playbook
         except:
-            result = {'finished':'false'}
+            result = {'finished':'false','uuid':str(self.uuid),'starttime':self.starttime, 'playbook': self.playbook}
         return result
     
     @stats.setter
@@ -50,6 +54,10 @@ class Job(object):
         
     def finished(self):
         self.stoptime = datetime.datetime.now()
+        
+    def filenotfound(self):
+        self._stats  = AggregateStats()
+        self._stats.failures['file'] = 'playbook not found'
 
 class JobFabric(object):
     
@@ -66,6 +74,15 @@ class JobFabric(object):
     
     def getJobList(self):
         return self.jc.getJobs().keys()
+    
+    def getJobListDetails(self):
+        jobs =  self.jc.getJobs()
+        result = []
+        for key in jobs.keys():
+            cache = jobs[key]
+            result.append(cache.stats)
+        return result
+        
     
     def setInventory(self, uuid, inventoryJSON):
         if not uuid or not inventoryJSON:
@@ -84,6 +101,7 @@ class JobFabric(object):
             return
         j = self.getJob(uuid)
         invContainer = inventoryContainer(j.inventory_json)
+        j.playbook = playbook
         ja = JobAnsible(invContainer, playbook=playbook, job=self.getJob(uuid))
         ja.start()
     

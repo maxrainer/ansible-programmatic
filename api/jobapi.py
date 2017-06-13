@@ -11,6 +11,7 @@ from flask.helpers import make_response
 from optparse import OptionParser
 import re
 from config.configuration import Configuration
+from scipy.optimize._tstutils import methods
 
 app = Flask(__name__)
 
@@ -42,7 +43,14 @@ def get_state(uuid):
     job = cf.getJob(uuid)
     if not job.stats:
         return jsonify({'state': 'running'})
-    return jsonify({'state': job.stats})     
+    return jsonify({'state': job.stats})   
+
+@app.route('/ansible/api/v1.0/jobsdetail', methods=['GET'])
+def get_jobdetail():
+    cf = JobFabric()
+    jobs = cf.getJobListDetails()
+    return jsonify({'jobs': jobs})
+      
 
 @app.errorhandler(400)
 def bad_request(error):

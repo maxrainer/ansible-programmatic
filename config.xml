@@ -2,6 +2,6 @@
 <config>
 	<playbook_dir>/Users/max/Documents/dev/ansible/dev</playbook_dir>
 	<playbook_default>site.yaml</playbook_default>
-	<job_history>5</job_history>
+	<job_history>10</job_history>
 </config>
 
