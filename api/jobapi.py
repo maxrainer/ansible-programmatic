@@ -11,7 +11,6 @@ from flask.helpers import make_response
 from optparse import OptionParser
 import re
 from config.configuration import Configuration
-from scipy.optimize._tstutils import methods
 
 app = Flask(__name__)
 
