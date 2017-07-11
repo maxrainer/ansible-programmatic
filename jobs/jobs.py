@@ -12,6 +12,7 @@ from config.configuration import Configuration
 from _collections import deque
 import datetime
 from ansible.executor.stats import AggregateStats
+from PlaybookAPI import PlaybookAPI
 
 
 class Job(object):
@@ -102,9 +103,11 @@ class JobFabric(object):
         j = self.getJob(uuid)
         invContainer = inventoryContainer(j.inventory_json)
         j.playbook = playbook
-        ja = JobAnsible(invContainer, playbook=playbook, job=self.getJob(uuid))
+        ja = PlaybookAPI(playbook, invContainer, j)
+        ja.parse()
+#        ja = JobAnsible(invContainer, playbook=playbook, job=self.getJob(uuid))
         ja.start()
-    
+#        ja.run()    
 
 class JobContainer(object):
     

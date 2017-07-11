@@ -18,8 +18,7 @@ app = Flask(__name__)
 def get_jobs():
     cf = JobFabric()
     return jsonify({'jobs': cf.getJobList()})
-
-    
+ 
 @app.route('/testing', methods=['GET'])
 def testing():
     return jsonify(origin=request.headers.get('X-Forwarded-For', request.host))
@@ -50,7 +49,6 @@ def get_jobdetail():
     jobs = cf.getJobListDetails()
     return jsonify({'jobs': jobs})
       
-
 @app.errorhandler(400)
 def bad_request(error):
     return make_response(jsonify({'error': "maybe missing parameter"}))

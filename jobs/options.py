@@ -3,6 +3,7 @@ Created on 14. Feb. 2017
 
 @author: max
 '''
+import optparse
 
 class AnsibleOptions(object):
     
@@ -17,20 +18,20 @@ class AnsibleOptions(object):
                  ask_pass=None, private_key_file=None, remote_user=None, connection=None, timeout=None, ssh_common_args=None,
                  sftp_extra_args=None, scp_extra_args=None, ssh_extra_args=None, poll_interval=None, seconds=None, check=None,
                  syntax=None, diff=None, force_handlers=None, flush_cache=None, listtasks=None, listtags=None, module_path=None):
-        self.verbosity = verbosity
+        self.verbosity = 1
         self.inventory = inventory
         self.listhosts = listhosts
         self.subset = subset
         self.module_paths = module_paths
-        self.extra_vars = extra_vars
-        self.forks = forks
+        self.extra_vars = []
+        self.forks = 5
         self.ask_vault_pass = ask_vault_pass
         self.vault_password_files = vault_password_files
         self.new_vault_password_file = new_vault_password_file
         self.output_file = output_file
-        self.tags = tags
-        self.skip_tags = skip_tags
-        self.one_line = one_line
+#        self.tags = tags
+#        self.skip_tags = skip_tags
+#        self.one_line = one_line
         self.tree = tree
         self.ask_sudo_pass = ask_sudo_pass
         self.ask_su_pass = ask_su_pass
@@ -43,13 +44,13 @@ class AnsibleOptions(object):
         self.ask_pass = ask_pass
         self.private_key_file = private_key_file
         self.remote_user = remote_user
-        self.connection = connection
-        self.timeout = timeout
+        self.connection = 'paramiko'
+        self.timeout = 2
         self.ssh_common_args = ssh_common_args
         self.sftp_extra_args = sftp_extra_args
-        self.scp_extra_args = scp_extra_args
-        self.ssh_extra_args = ssh_extra_args
-        self.poll_interval = poll_interval
+        self.scp_extra_args = ""
+        self.ssh_extra_args = ""
+#        self.poll_interval = poll_interval
         self.seconds = seconds
         self.check = check
         self.syntax = syntax
@@ -59,7 +60,14 @@ class AnsibleOptions(object):
         self.listtasks = listtasks
         self.listtags = listtags
         self.module_path = module_path
-
+        
+        self.inventory = "ise,"
+        self.skip_tags = []
+        self.su = False
+        self.su_user = None
+        self.tags = ["all"]
+        
+        
         self.jsonoptions = {}
         
         
