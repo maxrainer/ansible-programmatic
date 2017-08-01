@@ -27,13 +27,23 @@ def testing():
 def start_play(playbook):
     inventoryJSON = request.json['inventory']
     optionsJSON = request.json['options']
+    description = request.json['description']
+    user = request.json['user']
     cf = JobFabric()
     uuid = cf.createNewJob()
     cf.setInventory(uuid, inventoryJSON)
+    cf.setDescription(uuid, description)
+    cf.setUser(uuid, user)
     cf.setOptions(uuid, optionsJSON)
     cf.runAnsible(uuid, playbook)
     stateurl = request.host_url + 'ansible/api/v1.0/state/' + str(uuid)
     return jsonify({'job': uuid, 'state_url': stateurl})
+
+@app.route('/ansible/api/v1.0/jobsdetails/<description>', methods=['GET'])
+def get_jobdetaildescr(description):
+    cf = JobFabric()
+    jobs = cf.getJobsByDescription(description)
+    return jsonify({'jobs': jobs})
 
 @app.route('/ansible/api/v1.0/state/<uuid>', methods=['GET'])
 def get_state(uuid):

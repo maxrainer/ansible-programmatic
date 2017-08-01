@@ -54,13 +54,14 @@ class PlaybookAPI(PlaybookCLI, Thread):
         self.options.check = False
         self.options.tags = ["all"]
         self.options.skip_tags = []
-        self.options.extra_vars = []
+        self.options.extra_vars = [{'uuid':str(self.apijob.uuid), 'elastic_url':Configuration.elastic_url}]
+#        self.options.extra_vars = []
         self.options.force_handlers = False
         self.options.start_at_task = None
         self.options.step = None
         self.options.subset = None
         self.options.verbosity = 3
-        self.options.timeout = 5         
+        self.options.timeout = 5  
 
     def run(self):
         
@@ -97,6 +98,10 @@ class PlaybookAPI(PlaybookCLI, Thread):
         # the code, ensuring a consistent view of global variables
         variable_manager = VariableManager()
         variable_manager.extra_vars = load_extra_vars(loader=loader, options=self.options)
+        
+#        extra_vars = {'elastic_url':Configuration.elastic_url,
+#                      'uuid':self._job.uuid }
+        
 
         variable_manager.options_vars = load_options_vars(self.options)
 
@@ -104,13 +109,17 @@ class PlaybookAPI(PlaybookCLI, Thread):
         inventory = Inventory(loader=loader, variable_manager=variable_manager, host_list=self.options.inventory)
         
         # added by rainer@nts.at
+        inventory.host_list = []
+        inventory.host_list = self.options.inventory
         for group in self.inventoryContainer.groups:
             if group.name == 'all':
                 if group.vars:
                     inventory.get_group('all').vars.update(group.vars)
             else:
                 group.parent_groups.append(inventory.get_group('all'))
+                inventory.get_group('all').child_groups.append(group)
                 inventory.add_group(group) 
+                
         
         variable_manager.set_inventory(inventory)
 
@@ -121,18 +130,19 @@ class PlaybookAPI(PlaybookCLI, Thread):
         #
         # Fix this when we rewrite inventory by making localhost a real host (and thus show up in list_hosts())
         no_hosts = False
-        if len(inventory.list_hosts()) == 0:
+#        if len(inventory.list_hosts()) == 0:
             # Empty inventory
-            display.warning("provided hosts list is empty, only localhost is available")
-            no_hosts = True
+#            display.warning("provided hosts list is empty, only localhost is available")
+#            no_hosts = True
         inventory.subset(self.options.subset)
-        if len(inventory.list_hosts()) == 0 and no_hosts is False:
+#        if len(inventory.list_hosts()) == 0 and no_hosts is False:
             # Invalid limit
-            raise AnsibleError("Specified --limit does not match any hosts")
+#            raise AnsibleError("Specified --limit does not match any hosts")
 
         # flush fact cache if requested
         if self.options.flush_cache:
             self._flush_cache(inventory, variable_manager)
+
 
         # create the playbook executor, which manages running the plays via a task queue manager
         self.pbex = PlaybookExecutor(playbooks=[playbook], inventory=inventory, variable_manager=variable_manager, loader=loader, options=self.options, passwords=passwords)

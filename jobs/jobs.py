@@ -13,6 +13,7 @@ from _collections import deque
 import datetime
 from ansible.executor.stats import AggregateStats
 from PlaybookAPI import PlaybookAPI
+import re
 
 
 class Job(object):
@@ -23,6 +24,7 @@ class Job(object):
         self.starttime = datetime.datetime.now()
         self.stoptime = None
         self.playbook = None
+        self.description = None
         
     @property
     def inventory_json(self):
@@ -45,6 +47,8 @@ class Job(object):
             result['starttime'] = self.starttime
             result['stoptime'] = self.stoptime
             result['playbook'] = self.playbook
+            result['description'] = self.description
+            result['user'] = self.user
         except:
             result = {'finished':'false','uuid':str(self.uuid),'starttime':self.starttime, 'playbook': self.playbook}
         return result
@@ -83,7 +87,16 @@ class JobFabric(object):
             cache = jobs[key]
             result.append(cache.stats)
         return result
-        
+      
+    def getJobsByDescription(self, description):
+        if not description:
+            return
+        jobs =  self.jc.getJobsByDescription(description)
+        result = []
+        for key in jobs.keys():
+            cache = jobs[key]
+            result.append(cache.stats)
+        return result
     
     def setInventory(self, uuid, inventoryJSON):
         if not uuid or not inventoryJSON:
@@ -91,6 +104,18 @@ class JobFabric(object):
         j = self.getJob(uuid)
         j.inventory_json = inventoryJSON
         
+    def setDescription(self, uuid, description):
+        if not uuid or not description:
+            return
+        j = self.getJob(uuid)
+        j.description = description
+        
+    def setUser(self, uuid, user):
+        if not uuid or not user:
+            return
+        j = self.getJob(uuid)
+        j.user = user
+    
     def setOptions(self, uuid, optionsJSON):
         if not uuid or not optionsJSON:
             return
@@ -123,7 +148,14 @@ class JobContainer(object):
             self.jobs.pop(oldest)
         self.uuids.append(uuid)
         self.jobs[uuid] = job
-    
+        
+    def getJobsByDescription(self, description):
+        result ={}
+        for j in self.jobs.values():
+            if (re.match(description, j.description)):
+                result[j.uuid] = j
+        return result
+                
     def getJobs(self):
         return self.jobs
         

@@ -4,4 +4,3 @@
 	<playbook_default>site.yaml</playbook_default>
 	<job_history>10</job_history>
 </config>
-
