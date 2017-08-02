@@ -118,9 +118,11 @@ class PlaybookAPI(PlaybookCLI, Thread):
             else:
                 group.parent_groups.append(inventory.get_group('all'))
                 inventory.get_group('all').child_groups.append(group)
+#                inventory.get_group('all').hosts.extend(group.hosts)                
+#                inventory.get_group('all').vars.update(group.vars)
+
                 inventory.add_group(group) 
                 
-        
         variable_manager.set_inventory(inventory)
 
         # (which is not returned in list_hosts()) is taken into account for
